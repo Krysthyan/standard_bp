@@ -283,7 +283,7 @@ En este paquete también se puede agregar las clases TransactionTrackingUtil y W
 
 ##### Resources
 
-Aquí se encuentran los archivos de las variables configuradas en el proyecto, existen 4 archivos de variables
+Aquí se encuentran los archivos de las variables configuradas en el proyecto. Los archivos dependen del framework y de arquitectura. Se recomienda el uso de yml y el uso de 4 archivos de variables. (* Esto debe ser acordado con el Arquitecto y Devops del proyecto)
 
 * application.yml (configuración y variables para ambiente local)
 * application-dev.yml (configuración y variables para ambiente de desarrollo)
@@ -292,8 +292,10 @@ Aquí se encuentran los archivos de las variables configuradas en el proyecto, e
 
 Adicional se encuentra un paquete denominado db.migration que tiene como objetivo almacenar los diferentes scripts SQL que vaya modificando la base de datos, para el nombramiento de estos scripts, van a seguir el siguiente patron:
 
+Ejemplo:
 * V\<anio>\<mes>\<dia>\<hora>\<minuto>__<create|update|delete>\_\<funcionalidad>.sql
   * V202101011201\_\_create_table_parameter.sql
+  * V1_0_0__create_table_parameter.sql (flyway)
 
 ### Nomenclatura
 
