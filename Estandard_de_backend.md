@@ -20,9 +20,9 @@ Por ejemplo: **crd-msa-customer**
 
 ### Estructura de paquetes
 
-Para el manejo de la estructura de de los paquetes se tomará como referencia [Domain driven design](https://es.wikipedia.org/wiki/Dise%C3%B1o_guiado_por_el_dominio), en donde tendremos la siguiente estructura:
+Para el manejo de la estructura de de los paquetes se tomará como referencia [Domain driven design](https://es.wikipedia.org/wiki/Dise%C3%B1o_guiado_por_el_dominio), en donde tendremos de ejemplo la siguiente estructura:
 
-#### Proyectos REST
+#### Proyectos REST Ejemplo
 
 ~~~
 * helm
@@ -66,7 +66,7 @@ Para el manejo de la estructura de de los paquetes se tomará como referencia [D
 
 
 
-#### Proyectos WebFlux
+#### Proyectos WebFlux Ejemplo
 
 ~~~
 * helm
@@ -105,18 +105,14 @@ Para el manejo de la estructura de de los paquetes se tomará como referencia [D
 - Dockerfile
 ~~~
 
-##### Heml
-
-Se trata de los archivos de configuración de variables en los diferentes ambientes, **dev**, **staging**, **prod**
-
 ##### Config
 
-En este paquete se incluyen todas las clases que hagan referencia a configuraciones del proyecto, como por ejm:
+En este paquete se incluyen todas las clases que hagan referencia a configuraciones del proyecto, como por ejemplo:
 
 * _ApplicationProperties.java_ (Mapear las variables establecidas en los resources @ConfigurationProperties)
 * _Constants.java_ (Establecer las diferentes constantes que va a tener el proyecto)
 * _DatabaseConfiguration.java_ (Configuración de la base de datos que se este utilizando)
-* _CacheDBConfiguration.java_ (Configurar la base de datos que se esté utilizando en el proyecto)
+* _CacheDBConfiguration.java_ (Configuración de la base de datos que se esté utilizando en el proyecto)
 * _JacksonConfiguration.java_ (Configuración de la serialización de los objetos del proyecto)
 * _LogginConfiguration.java_ (Configuración de los logs del proyecto)
 * _SecurityConfiguration.java_ (Configuración de la seguridad manejada en el proyecto, como las rutas permitidas y los roles permidos en caso de existir)
@@ -124,9 +120,9 @@ En este paquete se incluyen todas las clases que hagan referencia a configuracio
 
 ##### Repository
 
-Este paquete sirve para agregar las diferentes interfaces e implementaciones para la obtención de datos de una DB u realizar peticiones a otros microservicios, como por ejm:
+Este paquete sirve para agregar las diferentes interfaces e implementaciones para la obtención de datos de una DB u realizar peticiones a otros microservicios. Se debe tener una interface Repository y una implementación de la misma. Ejemplo:
 
-* Repository
+* repository
 
 * ~~~java
   public interface CustomerRepository {
@@ -158,7 +154,7 @@ Este paquete sirve para agregar las diferentes interfaces e implementaciones par
 
 ##### Service
 
-En este paquete se realiza todas las interfaces e implementaciones de los servicios (logica) de nuestro proyecto, por ejm:
+En este paquete se realiza todas las interfaces e implementaciones de los servicios (lógica) de nuestro proyecto. Se debe tener una interface Service y una implementación de la misma. Ejemplo:
 
 * service
 
@@ -197,7 +193,7 @@ En este paquete se realiza todas las interfaces e implementaciones de los servic
 
 ##### Controller
 
-Paquete donde se guardan las diferentes clases que contienen los endpoints de los servicios que va a tener el proyecto, por ejm:
+Paquete donde se guardan las diferentes clases que contienen los endpoints de los servicios de nuestro proyecto. Ejemplo:
 
 * controller
 
@@ -205,7 +201,7 @@ Paquete donde se guardan las diferentes clases que contienen los endpoints de lo
   @Slf4j
   @RequiredArgsConstructor
   @RestController
-  @RequestMapping("${endpoint.url}")
+  @RequestMapping("/api/v2")
   public class CheckOfferController {
       
     private String commonHeaderCrdDeviceIdKey;
@@ -224,28 +220,53 @@ Paquete donde se guardan las diferentes clases que contienen los endpoints de lo
       }
   ~~~
 
-##### Haldler
+##### Handler
 
---------------- no se como explicar esta parte ---------------------
+Paquete donde se guardan las diferentes clases que contienen los endpoints de los servicios de nuestro proyecto en caso de usar WebFlux. Se debe tener una interface handler y una implementación de la misma. Ejemplo:
+
+* handler
+
+* ~~~ java
+  public interface CreateHandler {
+     Mono<ServerResponse> create(ServerRequest serverRequest);
+  }
+  ~~~
+
+* impl
+
+* ~~~ java
+  @Component
+  @RequiredArgsConstructor
+  public class CreateHandlerImpl implements CreateHandler {
+  
+     private final TransactionTrackingHelper transactionTrackingHelper;
+     private final CreateOfferService createOfferService;
+     
+     @Override
+     public Mono<ServerResponse> status(ServerRequest serverRequest) {
+        transactionTrackingHelper.mdcPut(serverRequest.headers());
+        return this.createOfferService.status(serverRequest.pathVariable("identification"), serverRequest.pathVariable("identificationType"))
+         .flatMap(response -> ok().body(fromValue(response)));
+     }
+  }
+  ~~~
 
 ##### Domains
 
-En este paquete se guardará los modelos utilizados en el proyectos. Dentro de este paquete existe uno adicional que es el de enum, paquete que sirve para guardar las diferentes clases tipo enum que tenga el proyecto.
+En este paquete se guardará los modelos utilizados en el proyecto. Dentro de este paquete existe uno adicional que es el de enum, paquete que sirve para guardar las diferentes clases tipo enum que tenga el proyecto. Ejemplo:
 
 ~~~java
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder(toBuilder = true)
-public class CreateOfferRequestDto {
-  
-  private String identification;
-  private String identificationType;
-  private String timeWorking;
-  private String cif;
-  private String type;
-  private ProductDto product;
-  private List<JobStatusDto> jobStatus;
+@Getter
+public enum CustomerLogStatus {
+  NO_INIT("NO_INICIADO"),
+  INIT("INICIADO"),
+  VALIDATED("VALIDADO"),
+  NO_VALIDATED("NO_VALIDADO"),
+  SIMULATED_OFFER("OFERTA_SIMULADA"),
+  INIT_OPERATION("CREA_LA_OPERACION"),
+  INTERNAL_ERROR("INTERNAL_ERROR"),
+  FINALIZED("FINALIZADO"),
+  CANCELED("CANCELADO");
 }
 ~~~
 
