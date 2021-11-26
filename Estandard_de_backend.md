@@ -1,4 +1,4 @@
-# Estandard de backend
+# Estándar de Backend
 
 ### Configuración de IDEs
 
