@@ -35,11 +35,14 @@ Para el manejo de la estructura de de los paquetes se tomará como referencia [D
       * com.pichincha.<celula>.<nombre-proyecto>
         * config
         * respository
+          *impl
         * service
+          *impl
         * controller
         * domain
           * enums
         * util
+        * helper
     * resources
       - application.yml
       - application-dev.yml
@@ -54,10 +57,12 @@ Para el manejo de la estructura de de los paquetes se tomará como referencia [D
         * service
         * controller
         * util
+        * helper
 - azure-pipelines.yml
 - .gitignore
 - README.md
 - pom.xml
+- nombre-proyecto.yml (documentación API)
 - settings.xml
 - Dockerfile
 
@@ -79,11 +84,15 @@ Para el manejo de la estructura de de los paquetes se tomará como referencia [D
       * com.pichincha.<celula>.<nombre-proyecto>
         * config
         * respository
+          *impl
         * handler
+          *impl
         * service
+          *impl          
         * domain
           * enums
         * util
+        * helper
     * resources
       - application-dev.yml
       - application-staging.yml
@@ -97,10 +106,12 @@ Para el manejo de la estructura de de los paquetes se tomará como referencia [D
         * service
         * util
         * handler
+        * helper
 - azure-pipelines.yml
 - .gitignore
 - README.md
 - pom.xml
+- nombre-proyecto.yml (documentación API) 
 - settings.xml
 - Dockerfile
 ~~~
@@ -110,11 +121,10 @@ Para el manejo de la estructura de de los paquetes se tomará como referencia [D
 En este paquete se incluyen todas las clases que hagan referencia a configuraciones del proyecto, como por ejemplo:
 
 * _ApplicationProperties.java_ (Mapear las variables establecidas en los resources @ConfigurationProperties)
-* _Constants.java_ (Establecer las diferentes constantes que va a tener el proyecto)
 * _DatabaseConfiguration.java_ (Configuración de la base de datos que se este utilizando)
 * _CacheDBConfiguration.java_ (Configuración de la base de datos que se esté utilizando en el proyecto)
 * _JacksonConfiguration.java_ (Configuración de la serialización de los objetos del proyecto)
-* _LogginConfiguration.java_ (Configuración de los logs del proyecto)
+* _LogginConfiguration.java_ (Configuración de los logs del proyecto) * Opcional
 * _SecurityConfiguration.java_ (Configuración de la seguridad manejada en el proyecto, como las rutas permitidas y los roles permidos en caso de existir)
 * _WebfluxConfiguration.java_ (En caso de ser el proyecto de tipo webflux, en esta clase se coloca las diferentes configuraciones establecidas para el proyecto)
 
@@ -274,12 +284,17 @@ Para la creación de los modelos se recomienda utilizar la dependencia Lombok, l
 
 ##### Util
 
-Paquete para las clases que tienen funciones utilizadas en algunas partes del proyecto.
+Paquete para las clases que tienen funciones utilizadas en algunas partes del proyecto. Clase de transformación de datos. Clases estáticas.
+
+* _Constants.java_ (Establecer las diferentes constantes que va a tener el proyecto)
+
+##### Helper
+Paquete para las clases que tienen funciones utilizadas en algunas partes del proyecto. Clases instanciables
 
 En este paquete también se puede agregar las clases TransactionTrackingUtil y WebClientUtil
 
-* TransactionTrackingUtil (Componente para inyectar las cabeceras de las peticiones a los demas microservicios cuando sean invocados)
-* WebFluxClientUtil | RestClientUtil (Componente que tiene la funcionalidad de invocar otros microservicios con la configuración establecida en esta clase).
+* TransactionTrackingHelper (Componente para inyectar las cabeceras de las peticiones a los demas microservicios cuando sean invocados)
+* WebFluxClientHelper | RestClientHelper (Componente que tiene la funcionalidad de invocar otros microservicios con la configuración establecida en esta clase).
 
 ##### Resources
 
@@ -295,6 +310,7 @@ Adicional se encuentra un paquete denominado db.migration que tiene como objetiv
 Ejemplo:
 * V\<anio>\<mes>\<dia>\<hora>\<minuto>__<create|update|delete>\_\<funcionalidad>.sql
   * V202101011201\_\_create_table_parameter.sql
+* V\<Version>\<SubVersion>\<SubSubVersion>__<create|update|delete>\_\<funcionalidad>.sql
   * V1_0_0__create_table_parameter.sql (flyway)
 
 ### Nomenclatura
@@ -305,18 +321,32 @@ Ejemplo:
 - En el caso del uso del lenguaje Java, se recomienda el uso de las librerías **lombok** y **mapstruct**
 - Utilizar los lineamientos de [Clean code of  Robert C. Martin](https://www.amazon.com/-/es/Robert-C-Martin/dp/0132350882)
 
-#### clases
+#### Clases
 
 - El nombre de las clases deben ser a referencia de lo que va hacer la clase.
 - Para su nombramiento se debe utilizar el estilo _CamelCase_ en el caso de **Java** y _snake_case_ en el caso de **Python**.
 - En el nombre no se debe incluir prefijos o sufijos como DAO, URL, HTML.
 - Clases que sean implementación de una _interfaz_ se agregará a su nombre la terminación **Impl**
 
-Mencionar sobre los Dtos
+#### Métodos
 
-#### Metodos
+- Los métodos deben ser verbos en infinitivo con la nomenclatura lowerCamelCase.
+- Los métodos deben tener un nombre descriptivo que sean fáciles de LEER Y ENTENDER.
+- Deben iniciar con un verbo que explique o permita intuir que función cumple dicho método.
+- Con respecto al código el método debe ser pequeño, no debería sobrepasar los 20 –30 líneas como preferencia.
+- Un método debe hacer UNA SOLA COSA, y ser nombrado por dicha función que realiza. Single Responsability.
 
----------- estandard para los metodos -------------
+#### Variables
+
+- Los nombres de las variables deben ser relevantes y significativas a su uso: Ejemplo int elapsedTimeInDays.
+- No poner nombres genéricos como por ejemplo accountList, sino algo más específico como customerBankAccountList.
+- Evitar usar variables como i, j, k, l en los bucles. Esto cuando se tiene bucles anidados se vuelve muy complicado entender.
+- Usar nombres de variables que se puedan buscar de forma rápida y sencilla. Para ello es necesario que cada variable tenga un nombre significativo en cada clase. Por ejemplo, si una variable se llama account, y se busca por medio del IDE, dicha variable puede aparecer en muchas clases más aparte de la deseada.
+- La variable debe ser creada solo cuando se lo va a usar. (Cuidado con las variables en los return)
+
+#### Constantes
+
+- En caso de requerir utilizar constantes crear una clase Constant que contenga las constantes, los nombres de constantes de clases deberían escribirse todo en mayúsculas con las palabras separadas por subguión ("_"). Todas serán declaradas como public static final. Ejemplo:public static final String PROPERTY_URL_SERVICE = "urlServicio"; 
 
 ### Documentación
 
@@ -327,47 +357,53 @@ Para la documentación existen dos secciones, que se trata de:
 
 #### Documentación de código
 
-Para documentar el código se utiliza el estandard de de JAVADOC.
-
-No se permite realizar documentación dentro de los métodos o dejar código comentado en el proyecto.
-
-En el caso de Interfaces e implementaciones, se debe realizar la documentación en la interfaz y no en la implementación.
+* Para documentar el código se utiliza el estandard de JAVADOC.
+* No se permite realizar documentación dentro de los métodos o dejar código comentado en el proyecto.
+* En el caso de Interfaces e implementaciones, se debe realizar la documentación en la interfaz y no en la implementación. 
+* Vincular la documentacion de la implementación con la interfaz @inheritDoc .
 
 #### Documentación para APIs
 
-Para la documentación en Java utilizar la dependencia _spring-openapi_ para automatizar la generación de documentación API en formato JSON / YAML / y APIs HTML. 
+* Para la documentación de las API en JAVA se utiliza el archivo swagger (yml) llamado nombre-proyecto.yml que se encuentra en la raíz del mismo.
+* Es importante hacer la documentación previa a la programación como buenas prácticas.
 
-Esta documentación se puede completar con comentarios utilizando anotaciones de swagger-api, como por ejemplo:
+~~~ yml
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Sample API
+  description: A sample API to illustrate OpenAPI concepts
+paths:
+  /list:
+    get:
+      description: Returns a list of stuff              
+      responses:
+        '200':
+          description: Successful response
+~~~
 
+### Comentarios
+
+* La única razón para usar un comentario es por el hecho de brindar más información SIEMPRE Y CUANDO SEA NECESARIA.
+* El uso de comentarios debe evitarse a como dé lugar.
+* Siempre intente explicar su código sin el uso de comentarios.
+
+Ejemplo:
+* Incorrecto 
 ~~~ java
-@Operation(summary = "Create customer")
-@ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Successfully created a customer"),
-        @ApiResponse(responseCode = "400", description = "Bad Request"),
-        @ApiResponse(responseCode = "401", description = "Authorization denied"),
-        @ApiResponse(responseCode = "500", description = "Unexpected system exception"),
-        @ApiResponse(responseCode = "502", description = "An error has occurred with an upstream service")
-})
-@PostMapping(consumes = JSON)
-public ResponseEntity createCustomer(@Valid @RequestBody CustomerInfo customerInfo, UriComponentsBuilder uriBuilder)
-    throws Exception {
-    ...
-}
+// Check to see if the employee is eligible for full benefits  
+if ((employee.flags & HOURLY_FLAG) && (employee.age > 65)) 
+~~~
+* Correcto
+~~~ java
+if (employee.isEligibleForFullBenefits())  
 ~~~
 
 ### Pruebas
 
-Utilizar JUnit 5
-
-Utilziar JaCoCo para la cobertura de pruebas unitarias -> 75%
-
-#### Unitarias
-
-------- pruebas unitarias ----------
-
-#### Integración
-
---------- pruebas de integración ----------
+* Agregar la palabra Test al final de la clase que se desea probar. EJemplo: SerializedPageResponderTest.
+* En el nombre de cada prueba debe explicarse cuál va a ser el test a realizar y CUAL VA A SER EL RESULTADO esperado. Ejemplo: public void sendsIncorrectClientIdAndThrowsErrorTest()
+* El mínimo de cobertura de pruebas debe ser 75%.
 
 ### Buenas prácticas
 
