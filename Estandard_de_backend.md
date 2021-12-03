@@ -407,25 +407,16 @@ if (employee.isEligibleForFullBenefits())
 
 ### Buenas prácticas
 
-mencionar solid single Respo
-
-#### Standard dependecias en pom
+#### Standard dependecias
 
 - Colocar los números de versión de las dependencias dentro de la sección de _\<properties\>_
 - Incluir las versiones de todas las dependencias
 - No incluir el número de versiones de las dependecias que forman parte de la lista de spring boot.
-- No mezclar varias versiones de una dependecia en un proyecto, utilizar _mvn dependency:tree_ para identificar versiones conflictivas de las dependecias.
-
-#### Reglas de Logging *** borrar -> Estandard escritura de logs EventLog()  
-
-- Nunca utilizar System.Out o System.Err
-- Utilizar siempre SLF4J, Utilize la anotación _@Slf4j_ a nivel de clase
-- Utilizar siempre _Logback_ que viene incluido en spring boot.
-- No utilizar Java Util Logging (JUL)
+- No mezclar varias versiones de una dependecia en un proyecto, utilizar las funcionalidade de gestor de paquetes para ver el conflicto de versiones.
 
 #### Favorezca la inyección de constructor en lugar de @Autowired
 
-- Mantiene el código limpio, no nos permite crear dependecias circulares entre beans
+- Cuando se utiliza Autowired se puede crear dependecias circulares entre beans y por ende que la compilación falle.
 - Facilita la creación de instancias.
 - La mejor práctica para la inyección de dependecias en usar _Lombok_. Donde se debe declar una propiedad final del tipo interfaz y anotar la clase usando _@RequiredArgsConstructor_ 
 
@@ -448,6 +439,10 @@ mencionar solid single Respo
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
     ~~~
+
+### Estandard escritura de logs EventLog()
+- Nunca utilizar System.Out o System.Err
+#### Estandard
 
 #### Validación de beans
 
