@@ -440,27 +440,42 @@ if (employee.isEligibleForFullBenefits())
     }
     ~~~
 
-### Estandard escritura de logs EventLog()
+### Estandard escritura
+
 - Nunca utilizar System.Out o System.Err
-#### Estandard
 
-#### Validación de beans
+### RECOMENDACIONES
 
-#### Paginación y clasificación con Spring Data JPA
-
-#### Exponer puntos finales de comprobación de estado
-
-#### Aplicar estilo de verificación
-
-#### Liquibase para la gestión de cambioos en el esquema de base de datos -> revisar otras opciones
-
-#### utilizar maven wrapper
-
-#### Patrones de arquitectura -> si se pone hay que hace revisiones con arch
-
-#### Patrones de diseno
-
-
+* Utilizar maven wrapper **[Maven Wrapper](https://www.baeldung.com/maven-wrapper)**. 
+* Se recomienda el uso de patrones de diseño. Para obtener mayor información se puede usar el siguiente link **[Patrones de Diseño](https://refactoring.guru/es/design-patterns/catalog)**.
+* Utilizar plugin de SonarLint para verificar el estilo del código y así evitar tener que mandar a pipeline para recibir feedfack.
+*  Exponer estados finales de los APIs utilizando actuator. (spring-boot-starter-actuator)
+* Utilizar Beans de validación, para esto se puede generar anotaciones bean, para validaciones. Ejemplo:
+  ~~~java
+  @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
+  @Retention(RUNTIME)
+  @Repeatable(CurrencyCode.List.class)
+  @Documented
+  @Constraint(validatedBy = { CurrencyCodeValidator.class })
+  public @interface CurrencyCode {
+  
+    String message() default "must be a valid currency code";
+    Class<?>[] groups() default { };
+    Class<? extends Payload>[] payload() default { };
+  
+    @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
+    @Retention(RUNTIME)
+    @Documented
+    @interface List {
+      CurrencyCode[] value();
+    }
+  }
+  ~~~
+  Implementación
+  ~~~java
+  @CurrencyCode //custom annotation
+  private String currency;
+  ~~~
 
 ### Plantillas base
 
